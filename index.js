@@ -8,7 +8,7 @@ var chart    = require('chart.js')
 /*-----------------------------------------------------
   THEME
 -------------------------------------------------------*/
-var font       = 'Kaushan Script, cursive'
+var FONT       = 'Baloo Chettan, cursive'
 var yellow     = 'hsla(52,35%,63%,1)'
 var white      = 'hsla(120,24%,96%,1)'
 var violet     = 'hsla(329,25%,45%,1)'
@@ -17,42 +17,44 @@ var darkBrown  = 'hsla(13,19%,45%,1)'
 /*-----------------------------------------------------------------------------
   LOADING FONT
 -----------------------------------------------------------------------------*/
-var links = ['https://fonts.googleapis.com/css?family=Kaushan+Script']
-var font = yo`<link href=${links[0]} rel='stylesheet' type='text/css'>`
+//https://fonts.google.com/?query=baloo&selection.family=Baloo+Chettan
+var font = yo `
+  <style>
+  @font-face {
+    font-family: 'Baloo Chettan';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Baloo Chettan'), local('BalooChettan-Regular'), url(baloochettan-latin.woff) format('woff');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+    }
+  </style>
+`
 document.head.appendChild(font)
 /*-----------------------------------------------------------------------------
 LOADING DATA
 -----------------------------------------------------------------------------*/
+
 var questions = [
-`
-Statement #1:
-The next social network I build,
-will definitely be for cats.
-`,
-`
-Statement #2:
-I believe dogs should be allowed
-everywhere people are
-`,
-`
-Statement #3:
-My friends say, my middle name should be "Meow".
-`,
-`
-Statement #4:
-Snoop Dog is definitely one of my
-favourite artists
-`,
-`
-Statement #5:
-I think I could spend all day just
-watching cat videows
-`,
-`
-Statement #6:
-I regularly stop people in the street
-to pet their dogs.
-`
+  `
+      It's a waste of time to learn any other language than #JavaScript.
+      The future is with JS :)
+  `,
+  `
+      Framework vs. #hypermodular development is like planned economy vs. free market.
+  `,
+  `
+      Information asymmetry can best be broken by making everything #transparent.
+  `,
+  `
+      Programming is the new literacy, everyone should learn it. All other jobs
+      will be #automated.
+  `,
+  `
+      Employment is for kids. Grown ups are #self-employed.
+  `,
+  `
+    With #VR all the jobs will be remote. On-site gatherings will be for fun.
+  `
 ]
 var i               = 0
 var question        = questions[i]
@@ -64,21 +66,27 @@ var answerOptions   = [1,2,3,4,5,6]
 function quizComponent () {
   var css = csjs`
     .quiz {
+      touch-action: manipulation;
       background-color: ${yellow};
       text-align: center;
-      font-family: 'Kaushan Script', cursive;
-      padding-bottom: 200px;
+      font-family: ${FONT};
+      padding-bottom: 150px;
     }
     .welcome {
+      display: flex;
+      align-self: center;
+      text-transform: uppercase;
       font-size: 4em;
-      padding: 50px;
+      padding: 15% 15% 3% 15%;
       color: ${darkBrown}
     }
     .question {
       font-size: 2em;
       color: ${white};
-      padding: 40px;
-      margin: 0 5%;
+      padding: 5%;
+      width: 90%;
+      max-width: 1000px;
+      margin: auto;
     }
     .answers {
       display: flex;
@@ -87,34 +95,37 @@ function quizComponent () {
       margin: 0 5%;
     }
     .answer {
-      background-color: ${violet};
-      padding: 15px;
-      margin: 5px;
-      border: 2px solid ${white};
+      font-size: 2em;
+      font-color: ${darkBrown}
+      background-color: ${white};
+      padding: 5%;
+      margin: 1%;
+      border: 2px solid ${darkBrown};
       border-radius: 30%;
     }
     .answer:hover {
-      background-color: ${lightBrown};
-      cursor: pointer;
+      opacity: 0.6;
     }
     .instruction {
-      color: ${violet};
-      font-size: 1em;
+      color: ${darkBrown};
+      font-size: 1.5em;
       margin: 0 15%;
-      padding: 20px;
+      padding: 10px;
     }
     .results {
+      touch-action: manipulation;
       background-color: ${white};
       text-align: center;
-      font-family: 'Kaushan Script', cursive;
-      padding-bottom: 200px;
+      font-family: ${FONT};
+      padding: 15% 3% 40% 3%;
     }
     .resultTitle{
       font-size: 4em;
-      padding: 50px;
+      padding: 5% 5% 0 5%;
       color: ${darkBrown}
     }
     .back {
+      margin-top: 30px;
       display: flex;
       justify-content: center;
     }
@@ -123,21 +134,37 @@ function quizComponent () {
       padding: 5px;
     }
     .backText {
+      padding-top: 5px;
       color: ${white};
       font-size: 25px;
     }
-    .showChart {
+    .chooseChartOrPlayAgain {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .showChart, .playAgain {
+      background-color: ${white};
+      padding: 2%;
+      border: 3px solid ${darkBrown};
+      border-radius: 5%;
       font-size: 2em;
       color: ${violet};
-      margin: 35px;
-    }
-    .showChart:hover {
-      color: ${yellow};
-      cursor: pointer;
+      margin: 5%;
     }
     .myChart {
-      width: 300px;
-      height: 300px;
+      width: 100%;
+      height: 100%;
+    }
+    @media only screen and (max-width: 700px) {
+      body {
+        font-size:75%;
+      }
+    }
+    @media only screen and (max-width: 400px) {
+      body {
+        font-size:50%;
+      }
     }
   `
 
@@ -145,7 +172,7 @@ function quizComponent () {
     return yo`
       <div class="${css.quiz}">
         <div class="${css.welcome}">
-          Welcome to my quiz!
+          What type of JavaScript hacker are you?
         </div>
         <div class="${css.question}">
           ${question}
@@ -155,9 +182,9 @@ function quizComponent () {
         </div>
         <div class="${css.instruction}">
           Choose how strongly do you agree with the statement<br>
-          (1 - don't agree at all, 6 - completely agree)
+          (1 - no way, 6 - totally)
         </div>
-           <div class="${css.back}" onclick=${back}>
+        <div class="${css.back}" onclick=${back}>
            <img src="http://i.imgur.com/L6kXXEi.png" class="${css.backImg}">
            <div class="${css.backText}">Back</div>
         </div>
@@ -183,28 +210,37 @@ function quizComponent () {
       }
     }
 	}
-
+  var state = 0;
   function seeResults(data) {
-  var ctx = yo`<canvas class="${css.myChart}"></canvas>`
+  var ctx = yo`<canvas class="${css.myChart}  style="width='100px;' height='100px;'"></canvas>`
   return yo`
     <div class="${css.results}">
-      <div class="${css.resultTitle}">
-        Compare your answers
+      <div class="${css.resultTitle}" onclick=${function(){createChart(ctx, data)}}>
+        Yay, awesome!
       </div>
+      <div class="${css.chooseChartOrPlayAgain}">
         <div class="${css.showChart}" onclick=${function(){createChart(ctx, data)}}>
-        Click to see the chart
+          Show results
+        </div>
+        <div class="${css.playAgain}" onclick=${playAgain}>Play again</div>
       </div>
-      ${ctx}
+        ${ctx}
     </div>
   `
 	}
 
+  function playAgain () {
+    i = 0;
+    question = questions[i]
+    yo.update(element, template())
+  }
+
   function back() {
     if (i > 0) {
       i = i-1
-      question = questions[i]
-      yo.update(element, template())
     }
+    question = questions[i]
+    yo.update(element, template())
   }
 
   function sendData(results) {
@@ -217,7 +253,7 @@ function quizComponent () {
   }
 
   function createChart(ctx, myData) {
-    minixhr('https://quiz-15523.firebaseio.com/results.json', responseHandler)
+    minixhr('https://quiz-15523.firebaseio.com/results.json', responseHandler) //Firebase connected to Esova google account
     function responseHandler (data, response, xhr, header) {
       var data = JSON.parse(data)
       var keys = Object.keys(data)
@@ -228,8 +264,8 @@ function quizComponent () {
       }, myData)
       var data = {
         labels: [
-          "Statement #1", "Statement #2", "Statement #3",
-          "Statement #4", "Statement #5", "Statement #6"
+          "JAVASCRIPT", "HYPERMODULARITY", "TRANSPARENCY",
+          "AUTOMATION", "SELF-EMPLOYMENT", "VR"
         ],
         datasets: [
           {
